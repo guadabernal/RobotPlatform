@@ -40,7 +40,7 @@
 #define M4SIG 27    // Limit Switch 4
 
 // RX TX Communications
-#define RX1 28  // Sharp IR3
-#define TX1 29  // Sharp IR3
-#define RX2 35  // Sharp IR3
-#define TX2 34  // Sharp IR3
+#define RX1 28  
+#define TX1 29
+#define RX2 35
+#define TX2 34

@@ -12,7 +12,6 @@
 #define MOTOR_CCW 0
 #define MOTOR_CW  1
 
-#define WHEEL_DIAMETER      0.2032
 #define MOTOR_RPM_MAX       90
 #define MOTOR_CPR           1440
 #define GEAR_FACTOR         1
@@ -60,30 +59,6 @@ public:
     analogWrite(pinPWM, pwm);
   }
 
-  int32_t distanceToCount(float distance) { return distance  * DISTANCE_COUNT_FACTOR * dirRot; }
-
-  void goToDistance(float rpm, float distance) {
-    int32_t count = distanceToCount(distance);
-    rpm = abs(rpm) * sgn(count);
-    if (rpm == 0) {
-      mode = MOTOR_NONE;
-      stop();
-      pidV.reset();
-      return;
-    }
-    done = false;
-    mode = MOTOR_TO_COUNT;
-    float ang_vel = rpm / 60; // rps
-    dtPIDMin = PID_COUNT_MIN / float(MOTOR_CPR) / abs(ang_vel); // s
-    if (abs(rpm) > MOTOR_RPM_MAX) rpm = MOTOR_RPM_MAX * sgn(rpm);
-    pidV.setTarget(rpm);
-    pidD.setTarget(count);
-    goToCountTargetSpeed=rpm;
-
-    t0 = micros();
-    oldCounter = counter;
-  }
-
   void goToSpeed(float rpm) {
     if (rpm == 0) {
       mode = MOTOR_NONE;
@@ -116,13 +91,6 @@ public:
         currentDir = pwm < 0 ? MOTOR_CW : MOTOR_CCW;
         currentPWM = abs(pwm);
         oldCounter = counter;
-//                Serial.print(id);
-//        Serial.print(" ");
-//        Serial.print(counter);
-//        Serial.print(" ");
-//        Serial.print(oldCounter);
-//        Serial.print(" ");
-//        Serial.println(currentV);
         t0 = micros();
         break;
       }
@@ -145,11 +113,6 @@ public:
         currentDir = pwm < 0 ? MOTOR_CW : MOTOR_CCW;
         currentPWM = abs(pwm);
         oldCounter = counter;
-//        Serial.print(id);
-//        Serial.print(" ");
-//        Serial.print(counter);
-//        Serial.print(" ");
-//        Serial.println(currentV);
 
         if (abs(counter - pidD.getTarget()) < 10) {
           off();
@@ -165,7 +128,6 @@ public:
 
   uint32_t getPWM() { return currentPWM; }
   uint32_t getDir() { return currentDir; }
-
   int getMode() { return mode; }
   int dir() { return counter > 0; }
 
@@ -174,7 +136,6 @@ public:
   int counter = 0;
 
   void resetCounter() { counter = 0; }
-
 
   void updateA() {
     int vB = digitalRead(pinB);
