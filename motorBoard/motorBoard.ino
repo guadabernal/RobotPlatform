@@ -13,8 +13,6 @@
 #define T0Serial    Serial1
 #define Debug       Serial
 
-void updateA(Motor motor) { motor.updateA(); }
-void updateB(Motor motor) { motor.updateB(); }
 
 void setup() {
   //  Debug.begin(115200); // Debug serial port
@@ -22,19 +20,6 @@ void setup() {
   Serial.begin(115200);
   motors.setup();
 
-  Motor M1();
-  Motor M2();
-  Motor M3();
-  Motor M4();
-
-  attachInterrupt(digitalPinToInterrupt(M1.getPinA()), updateA, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M1.getPinB()), updateB, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M2.getPinA()), updateA, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M2.getPinB()), updateB, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M3.getPinA()), updateA, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M3.getPinB()), updateB, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M4.getPinA()), updateA, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M4.getPinB()), updateB, CHANGE);
 
   delay(1000);
   //  motors.resetPosition();

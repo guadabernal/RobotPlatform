@@ -3,31 +3,35 @@
 #include "pins.h"
 #include "dc_motor.h"
 
-class RMotors {
-public:
-  enum MType { FR, FL, BR, BL};
-  RMotors()
-  : m{ {0, AERFR, BERFR, PWMRFR, INARFR, INBRFR, CSRFR, SIGFR}
-     , {1, AERFL, BERFL, PWMRFL, INARFL, INBRFL, CSRFL, SIGFL}
-     , {2, AERBR, BERBR, PWMRBR, INARBR, INBRBR, CSRBR, SIGBR}
-     , {3, AERBL, BERBL, PWMRBL, INARBL, INBRBL, CSRBL, SIGBL} }
-  {}
 
-  void updateA(uint8_t motorId) {
-    m[motorId].updateA();
+class motorManager
+{
+public :
+  motorManager() = default;
+  motorManager(const motorManager&) = delete;
+  motorManager& operator=(const motorManager&) = delete;
+  static motorManager& get() {
+    static motorManager instance;
+    return instance;
   }
 
-  void updateB(uint8_t motorId) {
-    m[motorId].updateB();
-  }
+  static void updateA(Motor motor) { motor.updateA(); }
+  static void updateB(Motor motor) { motor.updateB(); }
 
-  int getPinA(uint8_t motorId) {
-    return m[motorId].getPinA();
-  }
+  attachInterrupt(digitalPinToInterrupt(M1.getPinA()), updateA, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M1.getPinB()), updateB, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M2.getPinA()), updateA, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M2.getPinB()), updateB, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M3.getPinA()), updateA, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M3.getPinB()), updateB, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M4.getPinA()), updateA, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(M4.getPinB()), updateB, CHANGE);
 
-  int getPinB(uint8_t motorId) {
-    return m[motorId].getPinB();
-  }
+  void updateA  (uint8_t motorId) { m[motorId].updateA(); }
+  void updateB  (uint8_t motorId) { m[motorId].updateB(); }
+
+  int getPinA   (uint8_t motorId) { return m[motorId].getPinA(); }
+  int getPinB   (uint8_t motorId) { return m[motorId].getPinB(); }
 
   void setup() {
     for (uint8_t i = 0; i < 4; ++i)
@@ -134,7 +138,6 @@ public:
     m[BL].setMaxMinAngles(-90, 50);
   }
 
-
-private:
-  Motor m[4];
+private :
+    static int a;
 };
